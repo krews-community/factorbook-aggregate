@@ -50,6 +50,7 @@ fun CmdRunner.runTask(peaks: Path, signal: Path, chromInfo: Path, chrFilter: Set
         """.trimIndent()
     }
     val outPrefix = peaks.fileName.toString().split(".").first()
+    val combinedOutPrefix = "${peaks.fileName.toString().split(".").first()}_${signal.fileName.toString().split(".").first()}"
     val chromSizes = parseChromSizes(chromInfo)
 
     // Rewrite peaks names, apply chrom filter
@@ -57,16 +58,12 @@ fun CmdRunner.runTask(peaks: Path, signal: Path, chromInfo: Path, chrFilter: Set
     val cleanedPeaks = outputDir.resolve("$outPrefix$CLEANED_BED_SUFFIX")
     cleanPeaks(peaks, chrFilter, cleanedPeaks)
 
-    runAggregate(outputDir, outPrefix, signal, cleanedPeaks, chromSizes, offset)
-}
-
-fun CmdRunner.runAggregate(outputDir: Path, outPrefix: String, bigWigIn: Path, cleanedPeaks: Path, chromSizes: Map<String, Int>, offset: Int, chrFilter: Set<String>? = null) {
     val summitsFile = outputDir.resolve("$outPrefix$SUMMITS_FILE_SUFFIX")
     summits(cleanedPeaks, chromSizes, 2000, summitsFile, offset, chrFilter)
 
-    val valuesFile = outputDir.resolve("$outPrefix$VALUES_TSV_SUFFIX")
-    values(bigWigIn, summitsFile, valuesFile)
+    val valuesFile = outputDir.resolve("$combinedOutPrefix$VALUES_TSV_SUFFIX")
+    values(signal, summitsFile, valuesFile)
     
-    val aggregateFile = outputDir.resolve("$outPrefix$AGGREGATE_TSV_SUFFIX")
+    val aggregateFile = outputDir.resolve("$combinedOutPrefix$AGGREGATE_TSV_SUFFIX")
     aggregate(valuesFile, aggregateFile)
 }

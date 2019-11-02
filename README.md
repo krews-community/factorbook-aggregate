@@ -34,10 +34,9 @@ java -jar /app/aggregate.jar \
 ## Procedure
 
 -> Peaks (narrowPeak) \
--> Clean peaks (filter + rename) \
--> Summits (+/- 2000 from summit) \
--> Values (use bigwigvaluesoverbed, get values for each base in each peak, tsv) \
--> Aggregate (sum columns (bases), output as single-column tsv)
+-> Clean peaks (filters and names peaks) \
+-> Summits (expands peaks to +/- 2000 from summit) \
+-> Aggregate (gets aggregated values for each base across all the peaks, one base's value per line)
 
 ## File Inputs and Outputs
 

@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
+    java
     kotlin("jvm") version "1.3.21"
     id("com.github.johnrengelman.shadow") version "4.0.2"
     id("application")
@@ -13,6 +14,7 @@ val artifactID = "factorbook-aggregate"
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 val biojavaVersion = "5.2.1"
@@ -25,6 +27,7 @@ dependencies {
     compile("org.biojava", "biojava-core", biojavaVersion) {
         exclude("org.apache.logging.log4j")
     }
+    compile("org.jetbrains.bio:big:0.8.3")
     compile("org.biojava", "biojava-genome", biojavaVersion) {  
         exclude("org.apache.logging.log4j")
     }

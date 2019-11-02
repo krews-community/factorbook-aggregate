@@ -17,24 +17,13 @@ private val log = KotlinLogging.logger {}
  * @param output path to write resized output peaks.
  * @param offset number of base pairs to shift chrom start and end by (Optional)
  */
-fun summits(peaks: Path, chromSizes: Map<String, Int>, newSize: Int, output: Path, offset: Int? = null,
-            chrFilter: Set<String>? = null) {
-    log.info {
-        """
-        Creating summits for
-        peaks: $peaks
-        chromSizes $chromSizes
-        newSize: $newSize
-        offset: $offset
-        output: $output
-        chromFilter: $chrFilter
-        """.trimIndent()
-    }
-    val clippedRows = mutableListOf<PeaksRow>()
-    readPeaksFile(peaks) { row ->
-        if (chrFilter != null && chrFilter.contains(row.chrom)) return@readPeaksFile
+fun summits(peaks: List<PeaksRow>, chromSizes: Map<String, Int>, newSize: Int, offset: Int? = null,
+            chrFilter: Set<String>? = null): List<PeaksRow> {
 
-        val chromSize = chromSizes[row.chrom] ?: return@readPeaksFile
+    val clippedRows = mutableListOf<PeaksRow>()
+    peaks.forEach { row ->
+        if (chrFilter != null && chrFilter.contains(row.chrom)) return@forEach
+        val chromSize = chromSizes[row.chrom] ?: return@forEach
 
         val chromEnd = if (offset != null) {
             val newEnd = row.chromEnd + offset
@@ -55,7 +44,7 @@ fun summits(peaks: Path, chromSizes: Map<String, Int>, newSize: Int, output: Pat
         } else row.chromStart
 
         val midpoint = chromStart + row.peak
-        if (midpoint < newSize || midpoint + newSize > chromSize) return@readPeaksFile
+        if (midpoint < newSize || midpoint + newSize > chromSize) return@forEach
 
         val newStart = midpoint - newSize
         val newEnd = midpoint + newSize
@@ -64,7 +53,7 @@ fun summits(peaks: Path, chromSizes: Map<String, Int>, newSize: Int, output: Pat
     }
 
     clippedRows.sortWith(compareBy({ it.qValue }, { it.pValue }, { it.signalValue }))
-    writePeaksFile(output, clippedRows)
+    return clippedRows
 }
 
 /**

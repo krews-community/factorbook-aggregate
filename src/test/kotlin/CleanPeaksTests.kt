@@ -7,7 +7,8 @@ class CleanPeaksTests {
     @AfterEach fun cleanup() = cleanupTest()
 
     @Test fun `Test cleanPeaks`() {
-        cleanPeaks(PEAKS, TEST_CHR_FILTER, testOutputDir.resolve(CLEANED_PEAKS))
+        val peaks = cleanPeaks(PEAKS, TEST_CHR_FILTER)
+        writePeaksFile(testOutputDir.resolve(CLEANED_PEAKS), peaks)
         assertOutputMatches(CLEANED_PEAKS)
     }
 

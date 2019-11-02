@@ -7,16 +7,13 @@ class SummitsTests {
     @AfterEach fun cleanup() = cleanupTest()
 
     @Test fun `run summits step`() {
+        var peaks: MutableList<PeaksRow> = mutableListOf()
+        readPeaksFile(testInputDir.resolve(CLEANED_PEAKS)) {
+            peaks.add(it)
+        }
         val chromSizes = parseChromSizes(CHR22_CHROM_INFO)
-        summits(
-            testInputDir.resolve(CLEANED_PEAKS),
-            chromSizes,
-            2000,
-            testOutputDir.resolve(SUMMITS),
-            0,
-            TEST_CHR_FILTER
-        )
-
+        val peakSummits = summits(peaks, chromSizes, 2000, 0, TEST_CHR_FILTER)
+        writePeaksFile(testOutputDir.resolve(SUMMITS), peakSummits)
         assertOutputMatches(SUMMITS)
     }
 

@@ -12,10 +12,11 @@ import org.jetbrains.bio.big.*
  */
 fun CmdRunner.aggregate(bigWigIn: Path, peaks: List<PeaksRow>, output: Path) {
     var values = DoubleArray(peaks[0].chromEnd - peaks[0].chromStart)
+    val inv = 1.0 / peaks.size
     BigWigFile.read(bigWigIn).use { bigWig ->
         peaks.forEach {
             bigWig.summarize(it.chrom, it.chromStart, it.chromEnd, it.chromEnd - it.chromStart).forEachIndexed { index, value ->
-                values[index] += value.sum
+                values[index] += value.sum * inv
             }
         }
     }

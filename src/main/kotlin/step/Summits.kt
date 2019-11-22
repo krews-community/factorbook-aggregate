@@ -24,7 +24,6 @@ fun summits(peaks: List<PeaksRow>, chromSizes: Map<String, Int>, newSize: Int, o
     peaks.forEach { row ->
         if (chrFilter != null && chrFilter.contains(row.chrom)) return@forEach
         val chromSize = chromSizes[row.chrom] ?: return@forEach
-
         val chromEnd = if (offset != null) {
             val newEnd = row.chromEnd + offset
             when {
@@ -33,7 +32,6 @@ fun summits(peaks: List<PeaksRow>, chromSizes: Map<String, Int>, newSize: Int, o
                 else -> newEnd
             }
         } else row.chromEnd
-
         val chromStart = if (offset != null) {
             val newStart = row.chromStart + offset
             when {
@@ -42,7 +40,6 @@ fun summits(peaks: List<PeaksRow>, chromSizes: Map<String, Int>, newSize: Int, o
                 else -> newStart
             }
         } else row.chromStart
-
         val midpoint = chromStart + row.peak
         if (midpoint < newSize || midpoint + newSize > chromSize) return@forEach
 

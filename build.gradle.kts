@@ -31,6 +31,7 @@ dependencies {
     compile("org.biojava", "biojava-genome", biojavaVersion) {  
         exclude("org.apache.logging.log4j")
     }
+    compile("org.jetbrains.bio:big:0.8.3")
     compile("org.apache.commons", "commons-math3", "3.6.1")
     implementation("com.squareup.moshi", "moshi-kotlin", "1.8.0")
     testImplementation("org.junit.jupiter", "junit-jupiter", "5.4.0")

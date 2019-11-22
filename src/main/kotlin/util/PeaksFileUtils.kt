@@ -5,16 +5,16 @@ import java.nio.file.Path
 import java.util.zip.GZIPInputStream
 
 data class PeaksRow(
-        val chrom: String,
-        val chromStart: Int,
-        val chromEnd: Int,
-        val name: String,
-        val score: Int,
-        val strand: Char,
-        val signalValue: Double,
-        val pValue: Double,
-        val qValue: Double,
-        val peak: Int
+    val chrom: String,
+    val chromStart: Int,
+    val chromEnd: Int,
+    val name: String,
+    val score: Int,
+    val strand: Char,
+    val signalValue: Double,
+    val pValue: Double,
+    val qValue: Double,
+    val peak: Int
 )
 
 fun readPeaksFile(peaks: Path, lineRange: IntRange? = null, handlePeaksRow: (PeaksRow) -> Unit) {

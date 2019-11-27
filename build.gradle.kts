@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.genomealmanac.factorbook"
-version = "1.0.0"
+version = "1.0.4"
 val artifactID = "factorbook-aggregate"
 
 repositories {

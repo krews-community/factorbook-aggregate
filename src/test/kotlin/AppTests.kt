@@ -12,7 +12,8 @@ import util.*
             CHR22_CHROM_INFO,
             TEST_CHR_FILTER,
             0,
-            testOutputDir
+            testOutputDir,
+            false
         )
 
         assertOutputMatches(CLEANED_PEAKS)

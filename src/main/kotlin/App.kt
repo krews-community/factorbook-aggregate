@@ -24,10 +24,12 @@ class Cli : CliktCommand() {
         .int().default(0)
     private val outputDir by option("--output-dir", help = "path to write output")
         .path().required()
+    private val alignStrand by option("--align-strand", help = "If set, then the values will be aligned by strand (minus strand will be flipped).")
+        .flag()
 
     override fun run() {
         val cmdRunner = DefaultCmdRunner()
-        cmdRunner.runTask(peaks, signal, chromInfo, chrFilter.toSet(), offset, outputDir)
+        cmdRunner.runTask(peaks, signal, chromInfo, chrFilter.toSet(), offset, outputDir, alignStrand)
     }
 }
 
@@ -37,7 +39,7 @@ class Cli : CliktCommand() {
  * @param peaks path to raw narrowPeaks file
  * @param signal path to signal bigWig file
  */
-fun CmdRunner.runTask(peaks: Path, signal: Path, chromInfo: Path, chrFilter: Set<String>? = null, offset: Int, outputDir: Path) {
+fun CmdRunner.runTask(peaks: Path, signal: Path, chromInfo: Path, chrFilter: Set<String>? = null, offset: Int, outputDir: Path, alignStrand: Boolean) {
     log.info {
         """
         Running histone aggregation task for
@@ -47,6 +49,7 @@ fun CmdRunner.runTask(peaks: Path, signal: Path, chromInfo: Path, chrFilter: Set
         chromFilter: $chrFilter
         offset: $offset
         outputDir: $outputDir
+        alignStrand: $alignStrand
         """.trimIndent()
     }
     val combinedOutPrefix = "${peaks.fileName.toString().split(".").first()}_${signal.fileName.toString().split(".").first()}"
@@ -57,5 +60,5 @@ fun CmdRunner.runTask(peaks: Path, signal: Path, chromInfo: Path, chrFilter: Set
     val cleanedPeaks = cleanPeaks(peaks, chrFilter)
     val peakSummits = summits(cleanedPeaks, chromSizes, 2000, offset, chrFilter)
     val aggregateFile = outputDir.resolve("$combinedOutPrefix$AGGREGATE_TSV_SUFFIX")
-    aggregate(signal, peakSummits, aggregateFile)
+    aggregate(signal, peakSummits, aggregateFile, alignStrand)
 }

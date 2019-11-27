@@ -10,12 +10,16 @@ import org.jetbrains.bio.big.*
  * @param bigWigIn input bigWig file.
  * @param peaks input peaks; must all be the same length.
  */
-fun CmdRunner.aggregate(bigWigIn: Path, peaks: List<PeaksRow>, output: Path) {
+fun CmdRunner.aggregate(bigWigIn: Path, peaks: List<PeaksRow>, output: Path, alignStrand: Boolean) {
     var values = DoubleArray(peaks[0].chromEnd - peaks[0].chromStart)
     val inv = 1.0 / peaks.size
     BigWigFile.read(bigWigIn).use { bigWig ->
         peaks.forEach {
-            bigWig.summarize(it.chrom, it.chromStart, it.chromEnd, it.chromEnd - it.chromStart).forEachIndexed { index, value ->
+            var summary = bigWig.summarize(it.chrom, it.chromStart, it.chromEnd, it.chromEnd - it.chromStart)
+            if (alignStrand && it.strand == '-') {
+                summary = summary.reversed()
+            }
+            summary.forEachIndexed { index, value ->
                 values[index] += value.sum * inv
             }
         }

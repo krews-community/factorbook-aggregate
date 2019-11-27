@@ -12,8 +12,16 @@ class AggregateTests {
         readPeaksFile(testInputDir.resolve(SUMMITS)) {
             peaks.add(it)
         }
-        cmdRunner.aggregate(testInputDir.resolve(SIGNAL), peaks, testOutputDir.resolve(AGGREGATE))
+        cmdRunner.aggregate(testInputDir.resolve(SIGNAL), peaks, testOutputDir.resolve(AGGREGATE), false)
         assertOutputMatches(AGGREGATE)
     }
 
+    @Test fun `Test aggregate reversed`() {
+        var peaks: MutableList<PeaksRow> = mutableListOf()
+        readPeaksFile(testInputDir.resolve(SUMMITS_STRAND)) {
+            peaks.add(it)
+        }
+        cmdRunner.aggregate(testInputDir.resolve(SIGNAL), peaks, testOutputDir.resolve(AGGREGATE_STRAND), true)
+        assertOutputMatches(AGGREGATE_STRAND)
+    }
 }

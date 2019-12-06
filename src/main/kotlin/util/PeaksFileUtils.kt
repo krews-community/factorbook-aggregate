@@ -17,14 +17,18 @@ data class PeaksRow(
     val peak: Int
 )
 
-fun readPeaksFile(peaks: Path, lineRange: IntRange? = null, handlePeaksRow: (PeaksRow) -> Unit) {
+fun readPeaksFile(peaks: Path, lineRange: IntRange? = null, handlePeaksRows: (Sequence<PeaksRow>) -> Unit) {
     val rawInputStream = Files.newInputStream(peaks)
     val inputStream = if (peaks.toString().endsWith(".gz")) GZIPInputStream(rawInputStream) else rawInputStream
     inputStream.reader().useLines { lines ->
-        lines.forEachIndexed { index, line ->
-            if (lineRange != null && !lineRange.contains(index)) return@forEachIndexed
-            val lineParts = line.trim().split("\t")
-            val rawRow = PeaksRow(
+        val peaksRowSequence = lines
+            .filterIndexed { index, _ ->
+                if (lineRange != null && !lineRange.contains(index)) return@filterIndexed false
+                true
+            }
+            .map { line ->
+                val lineParts = line.trim().split("\t")
+                PeaksRow(
                     chrom = lineParts[0],
                     chromStart = lineParts[1].toInt(),
                     chromEnd = lineParts[2].toInt(),
@@ -35,9 +39,9 @@ fun readPeaksFile(peaks: Path, lineRange: IntRange? = null, handlePeaksRow: (Pea
                     pValue = lineParts[7].toDouble(),
                     qValue = lineParts[8].toDouble(),
                     peak = lineParts[9].toInt()
-            )
-            handlePeaksRow(rawRow)
-        }
+                )
+            }
+        handlePeaksRows(peaksRowSequence)
     }
 }
 
